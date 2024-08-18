@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=Af6XWjbGDNPsd4DT9j1HZjeiIyrDz8gb2D52e8Lg2ERAO3r8AyD0H3Buu52TkHb199iAh8gYtSHbNVpl&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+</head>
+<body>
+    <h1>Choose Your Subscription</h1>
+    <div id="paypal-button-container-P-88R98063HW344112KM3AX5SI"></div>
+    
+    <script>
+      paypal.Buttons({
+          style: {
+              shape: 'pill',
+              color: 'blue',
+              layout: 'vertical',
+              label: 'subscribe'
+          },
+          createSubscription: function(data, actions) {
+            return actions.subscription.create({
+              plan_id: 'P-88R98063HW344112KM3AX5SI', // Ваш ID плана подписки
+              quantity: 1
+            });
+          },
+          onApprove: function(data, actions) {
+            alert("Subscription approved! Subscription ID: " + data.subscriptionID);
+            // Здесь вы можете реализовать логику после успешной подписки
+          }
+      }).render('#paypal-button-container-P-88R98063HW344112KM3AX5SI'); 
+    </script>
+</body>
+</html>

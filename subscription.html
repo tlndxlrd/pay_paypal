@@ -11,24 +11,26 @@
     <div id="paypal-button-container-P-88R98063HW344112KM3AX5SI"></div>
     
     <script>
-      paypal.Buttons({
-          style: {
-              shape: 'pill',
-              color: 'blue',
-              layout: 'vertical',
-              label: 'subscribe'
-          },
-          createSubscription: function(data, actions) {
-            return actions.subscription.create({
-              plan_id: 'P-88R98063HW344112KM3AX5SI', // Ваш ID плана подписки
-              quantity: 1
-            });
-          },
-          onApprove: function(data, actions) {
-            alert("Subscription approved! Subscription ID: " + data.subscriptionID);
-            // Здесь вы можете реализовать логику после успешной подписки
-          }
-      }).render('#paypal-button-container-P-88R98063HW344112KM3AX5SI'); 
+        paypal.Buttons({
+      style: {
+          shape: 'pill',
+          color: 'blue',
+          layout: 'vertical',
+          label: 'subscribe'
+      },
+      createSubscription: function(data, actions) {
+        var telegramUserId = "USER_TELEGRAM_ID"; // Подставьте сюда реальный ID пользователя
+
+        return actions.subscription.create({
+          plan_id: 'P-88R98063HW344112KM3AX5SI',
+          quantity: 1,
+          custom_id: telegramUserId // Привязываем Telegram ID пользователя
+        });
+      },
+      onApprove: function(data, actions) {
+        alert("Subscription successful!"); // Вывод успешного сообщения для пользователя
+      }
+  }).render('#paypal-button-container');
     </script>
 </body>
 </html>

@@ -1,36 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscribe</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=Af6XWjbGDNPsd4DT9j1HZjeiIyrDz8gb2D52e8Lg2ERAO3r8AyD0H3Buu52TkHb199iAh8gYtSHbNVpl&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-</head>
-<body>
-    <h1>Choose Your Subscription</h1>
-    <div id="paypal-button-container-P-88R98063HW344112KM3AX5SI"></div>
-    
-    <script>
-        paypal.Buttons({
-      style: {
-          shape: 'pill',
-          color: 'blue',
-          layout: 'vertical',
-          label: 'subscribe'
-      },
-      createSubscription: function(data, actions) {
-        var telegramUserId = "USER_TELEGRAM_ID"; // Подставьте сюда реальный ID пользователя
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe</title>
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=Af6XWjbGDNPsd4DT9j1HZjeiIyrDz8gb2D52e8Lg2ERAO3r8AyD0H3Buu52TkHb199iAh8gYtSHbNVpl&vault=true&intent=subscription"
+    data-sdk-integration-source="button-factory"></script>
+</head>
+
+<body>
+  <h1>Choose Your Subscription</h1>
+  <div id="paypal-button-container"></div>
+
+  <script>
+    // Функция для получения параметров из URL
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Получаем ID пользователя из параметров URL
+    var telegramUserId = getQueryParam('user_id');
+
+    if (!telegramUserId) {
+      alert("User ID is missing.");
+    }
+
+    paypal.Buttons({
+      style: {
+        shape: 'pill',
+        color: 'blue',
+        layout: 'vertical',
+        label: 'subscribe'
+      },
+      createSubscription: function (data, actions) {
         return actions.subscription.create({
           plan_id: 'P-88R98063HW344112KM3AX5SI',
           quantity: 1,
-          custom_id: telegramUserId // Привязываем Telegram ID пользователя
+          custom_id: telegramUserId // Используем ID пользователя в качестве custom_id
         });
       },
-      onApprove: function(data, actions) {
-        alert("Subscription successful!"); // Вывод успешного сообщения для пользователя
+      onApprove: function (data, actions) {
+        alert("Subscription successful!");
+        // Отправляем данные на ваш сервер
+        fetch('/update-subscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: telegramUserId,
+            subscription_id: data.subscriptionID
+          })
+        })
+          .then(response => response.json())
+          .then(data => console.log('Subscription updated:', data))
+          .catch(error => console.error('Error:', error));
+      },
+      onError: function (err) {
+        console.error("Subscription error:", err);
+        alert("An error occurred. Please try again.");
       }
-  }).render('#paypal-button-container');
-    </script>
+    }).render('#paypal-button-container');
+  </script>
 </body>
+
 </html>
